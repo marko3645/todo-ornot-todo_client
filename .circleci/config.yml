@@ -5,8 +5,7 @@ orbs:
   node: circleci/node@1.1.6
   sonarcloud: sonarsource/sonarcloud@1.0.1
 jobs:
-  build-and-test-client-side:
-    working_directory: ~/client
+  build-and-test:
     executor:
       name: node/default
     docker:
@@ -14,21 +13,21 @@ jobs:
     steps:
       - checkout
       - store_test_results:
-          path: client/coverage
+          path: coverage
       - node/with-cache:
-          cache-key: client/package.json
-          dir: client/node_modules
+          cache-key: package.json
+          dir: node_modules
           steps:
             - run:
                 name: install npm dependancies
-                command: cd client; npm install
+                command: npm install
             - run:
                 name: run tests
-                command: cd client; npm test
+                command: npm test
       - sonarcloud/scan
 workflows:
   version: 2
-  build-and-test-client-side:
+  build-and-test:
     jobs:
-      - build-and-test-client-side:
-          context: SonarCloud
+      - build-and-test:
+          context: TODO_Client
