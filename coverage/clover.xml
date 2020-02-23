@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<coverage generated="1582473241450" clover="3.2.0">
+  <project timestamp="1582473241450" name="All files">
+    <metrics statements="91" coveredstatements="91" conditionals="36" coveredconditionals="36" methods="34" coveredmethods="34" elements="161" coveredelements="161" complexity="0" loc="91" ncloc="91" packages="6" files="10" classes="10"/>
+    <package name="Components.TotControls">
+      <metrics statements="0" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+      <file name="index.ts" path="C:\Users\Marko\source\NodeRepos\TodoOrNotTodo\client\src\Components\TotControls\index.ts">
+        <metrics statements="0" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+      </file>
+    </package>
+    <package name="Components.TotControls.Interfaces">
+      <metrics statements="0" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+      <file name="TotControlInterfaces.ts" path="C:\Users\Marko\source\NodeRepos\TodoOrNotTodo\client\src\Components\TotControls\Interfaces\TotControlInterfaces.ts">
+        <metrics statements="0" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+      </file>
+    </package>
+    <package name="Declarations">
+      <metrics statements="0" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+      <file name="declaration.d.ts" path="C:\Users\Marko\source\NodeRepos\TodoOrNotTodo\client\src\Declarations\declaration.d.ts">
+        <metrics statements="0" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+      </file>
+    </package>
+    <package name="Services.FormInputLinkService">
+      <metrics statements="11" coveredstatements="11" conditionals="0" coveredconditionals="0" methods="8" coveredmethods="8"/>
+      <file name="FormInputLinkService.ts" path="C:\Users\Marko\source\NodeRepos\TodoOrNotTodo\client\src\Services\FormInputLinkService\FormInputLinkService.ts">
+        <metrics statements="11" coveredstatements="11" conditionals="0" coveredconditionals="0" methods="8" coveredmethods="8"/>
+        <line num="12" count="4" type="stmt"/>
+        <line num="13" count="4" type="stmt"/>
+        <line num="14" count="4" type="stmt"/>
+        <line num="15" count="4" type="stmt"/>
+        <line num="22" count="5" type="stmt"/>
+        <line num="23" count="5" type="stmt"/>
+        <line num="25" count="5" type="stmt"/>
+        <line num="29" count="2" type="stmt"/>
+        <line num="33" count="1" type="stmt"/>
+        <line num="37" count="3" type="stmt"/>
+        <line num="38" count="3" type="stmt"/>
+      </file>
+      <file name="index.ts" path="C:\Users\Marko\source\NodeRepos\TodoOrNotTodo\client\src\Services\FormInputLinkService\index.ts">
+        <metrics statements="0" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+      </file>
+    </package>
+    <package name="Services.ValidationService">
+      <metrics statements="73" coveredstatements="73" conditionals="26" coveredconditionals="26" methods="24" coveredmethods="24"/>
+      <file name="ValidationService.ts" path="C:\Users\Marko\source\NodeRepos\TodoOrNotTodo\client\src\Services\ValidationService\ValidationService.ts">
+        <metrics statements="58" coveredstatements="58" conditionals="22" coveredconditionals="22" methods="18" coveredmethods="18"/>
+        <line num="18" count="27" type="stmt"/>
+        <line num="19" count="27" type="stmt"/>
+        <line num="21" count="27" type="stmt"/>
+        <line num="22" count="27" type="stmt"/>
+        <line num="24" count="27" type="stmt"/>
+        <line num="25" count="27" type="stmt"/>
+        <line num="30" count="27" type="stmt"/>
+        <line num="31" count="27" type="stmt"/>
+        <line num="32" count="27" type="stmt"/>
+        <line num="36" count="16" type="stmt"/>
+        <line num="37" count="16" type="stmt"/>
+        <line num="38" count="16" type="stmt"/>
+        <line num="40" count="16" type="cond" truecount="2" falsecount="0"/>
+        <line num="42" count="16" type="stmt"/>
+        <line num="43" count="18" type="stmt"/>
+        <line num="44" count="18" type="cond" truecount="2" falsecount="0"/>
+        <line num="45" count="15" type="stmt"/>
+        <line num="46" count="15" type="stmt"/>
+        <line num="48" count="3" type="stmt"/>
+        <line num="51" count="16" type="stmt"/>
+        <line num="55" count="8" type="stmt"/>
+        <line num="57" count="8" type="stmt"/>
+        <line num="58" count="8" type="stmt"/>
+        <line num="60" count="8" type="cond" truecount="2" falsecount="0"/>
+        <line num="62" count="8" type="stmt"/>
+        <line num="63" count="9" type="stmt"/>
+        <line num="64" count="9" type="stmt"/>
+        <line num="65" count="9" type="stmt"/>
+        <line num="66" count="9" type="cond" truecount="2" falsecount="0"/>
+        <line num="67" count="2" type="stmt"/>
+        <line num="69" count="7" type="stmt"/>
+        <line num="70" count="7" type="stmt"/>
+        <line num="73" count="8" type="stmt"/>
+        <line num="77" count="6" type="stmt"/>
+        <line num="81" count="3" type="stmt"/>
+        <line num="83" count="3" type="stmt"/>
+        <line num="85" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="93" count="27" type="stmt"/>
+        <line num="97" count="1" type="stmt"/>
+        <line num="101" count="2" type="stmt"/>
+        <line num="102" count="2" type="stmt"/>
+        <line num="104" count="2" type="stmt"/>
+        <line num="106" count="2" type="stmt"/>
+        <line num="110" count="4" type="stmt"/>
+        <line num="114" count="1" type="stmt"/>
+        <line num="118" count="7" type="stmt"/>
+        <line num="120" count="7" type="stmt"/>
+        <line num="122" count="7" type="stmt"/>
+        <line num="124" count="9" type="stmt"/>
+        <line num="125" count="7" type="stmt"/>
+        <line num="129" count="7" type="stmt"/>
+        <line num="130" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="131" count="1" type="stmt"/>
+        <line num="132" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="133" count="1" type="stmt"/>
+        <line num="135" count="1" type="stmt"/>
+        <line num="141" count="7" type="stmt"/>
+        <line num="142" count="10" type="cond" truecount="4" falsecount="0"/>
+      </file>
+      <file name="ValidationServiceBuilder.ts" path="C:\Users\Marko\source\NodeRepos\TodoOrNotTodo\client\src\Services\ValidationService\ValidationServiceBuilder.ts">
+        <metrics statements="15" coveredstatements="15" conditionals="4" coveredconditionals="4" methods="6" coveredmethods="6"/>
+        <line num="8" count="6" type="stmt"/>
+        <line num="9" count="6" type="stmt"/>
+        <line num="13" count="6" type="stmt"/>
+        <line num="17" count="1" type="stmt"/>
+        <line num="18" count="1" type="stmt"/>
+        <line num="22" count="1" type="stmt"/>
+        <line num="23" count="1" type="stmt"/>
+        <line num="27" count="4" type="stmt"/>
+        <line num="30" count="4" type="cond" truecount="4" falsecount="0"/>
+        <line num="32" count="1" type="stmt"/>
+        <line num="35" count="1" type="stmt"/>
+        <line num="38" count="1" type="stmt"/>
+        <line num="41" count="1" type="stmt"/>
+        <line num="49" count="4" type="stmt"/>
+        <line num="50" count="4" type="stmt"/>
+      </file>
+      <file name="index.ts" path="C:\Users\Marko\source\NodeRepos\TodoOrNotTodo\client\src\Services\ValidationService\index.ts">
+        <metrics statements="0" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+      </file>
+    </package>
+    <package name="Utils">
+      <metrics statements="7" coveredstatements="7" conditionals="10" coveredconditionals="10" methods="2" coveredmethods="2"/>
+      <file name="AjaxUtils.ts" path="C:\Users\Marko\source\NodeRepos\TodoOrNotTodo\client\src\Utils\AjaxUtils.ts">
+        <metrics statements="6" coveredstatements="6" conditionals="10" coveredconditionals="10" methods="1" coveredmethods="1"/>
+        <line num="16" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="17" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="18" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="19" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="21" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="23" count="2" type="stmt"/>
+      </file>
+      <file name="ConfigUtils.ts" path="C:\Users\Marko\source\NodeRepos\TodoOrNotTodo\client\src\Utils\ConfigUtils.ts">
+        <metrics statements="1" coveredstatements="1" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
+        <line num="10" count="2" type="stmt"/>
+      </file>
+    </package>
+  </project>
+</coverage>
