@@ -8,6 +8,7 @@ import { AjaxUtils } from "../../../Utils/AjaxUtils";
 
 interface LoginFormState {
 	isLogginIn?: boolean;
+	OnSignUpClick?: () => void;
 }
 
 const HeadingContainer = styled.div`
@@ -102,7 +103,6 @@ const BtnLogin = styled(TotButton)`
 
 const SignUpButtonContainer = styled.div`
 	display: flex;
-
 	& > div {
 		margin-right: auto;
 		margin-left: 5px;
@@ -141,6 +141,7 @@ export class LoginForm extends React.Component<LoginFormState, LoginFormState> {
 	constructor(props) {
 		super(props);
 		this.OnLoginClick = this.OnLoginClick.bind(this);
+		this.OnSignUpClick = this.OnSignUpClick.bind(this);
 		this.state = { ...this.props };
 	}
 
@@ -164,7 +165,7 @@ export class LoginForm extends React.Component<LoginFormState, LoginFormState> {
 						{this.BuildLoginButton()}
 						<SignUpButtonContainer>
 							<span>Don't have an account yet?</span>
-							<TotButton type="outlined" LabelText="SIGN UP" />
+							<TotButton type="outlined" LabelText="SIGN UP" onClick={this.OnSignUpClick}/>
 						</SignUpButtonContainer>
 					</LoginActionContainer>
 					<BottomFormSeparator />
@@ -205,5 +206,9 @@ export class LoginForm extends React.Component<LoginFormState, LoginFormState> {
 		})
 			.catch((err) => {})
 			.then((value) => {});
+	}
+
+	private OnSignUpClick(){
+		this.props.OnSignUpClick();
 	}
 }

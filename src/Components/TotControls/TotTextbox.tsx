@@ -57,7 +57,7 @@ const InnerContainer = styled.div`
 	}
 
 	&:hover:not(.active) {
-		border-color: black;
+		border-color: ${props => props.theme.colors.Border_Hovered};
 	}
 `;
 
@@ -68,12 +68,13 @@ const Textbox = styled.input`
 	border: none;
 
 	color: ${(props) => props.theme.colors.Text_Primary};
+	background: ${props => props.theme.colors.Background_Primary};
 `;
 
 const Label = styled.label`
 	position: absolute;
 
-	background: ${(props) => props.theme.colors.Background_Light};
+	background: ${(props) => props.theme.colors.Background_Primary};
 
 	padding: 0px 4px;
 

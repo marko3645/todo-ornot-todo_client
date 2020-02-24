@@ -1,7 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1582535547295" clover="3.2.0">
-  <project timestamp="1582535547295" name="All files">
-    <metrics statements="91" coveredstatements="18" conditionals="36" coveredconditionals="10" methods="34" coveredmethods="10" elements="161" coveredelements="38" complexity="0" loc="91" ncloc="91" packages="6" files="10" classes="10"/>
+<coverage generated="1582537871465" clover="3.2.0">
+  <project timestamp="1582537871465" name="All files">
+    <metrics statements="93" coveredstatements="18" conditionals="36" coveredconditionals="10" methods="35" coveredmethods="10" elements="164" coveredelements="38" complexity="0" loc="93" ncloc="93" packages="7" files="11" classes="11"/>
+    <package name="Components">
+      <metrics statements="2" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="0"/>
+      <file name="Theme.ts" path="D:\Users\Marko\Source\Non_Work_Repos\TodoOrNotTodo\todo-ornot-todo_client\src\Components\Theme.ts">
+        <metrics statements="2" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="0"/>
+        <line num="42" count="0" type="stmt"/>
+        <line num="44" count="0" type="stmt"/>
+      </file>
+    </package>
     <package name="Components.TotControls">
       <metrics statements="0" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
       <file name="index.ts" path="D:\Users\Marko\Source\Non_Work_Repos\TodoOrNotTodo\todo-ornot-todo_client\src\Components\TotControls\index.ts">

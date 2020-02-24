@@ -38,3 +38,8 @@ export class FormInputLinkService {
 		return inputLink;
 	}
 }
+
+
+export class InputLinkPipeLine{
+
+}
