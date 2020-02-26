@@ -3,8 +3,12 @@ import * as React from "react";
 import styled from "styled-components";
 import { TotForm, TotTextbox, TotButton } from "../../TotControls";
 import { FormInputLinkService } from "../../../Services/FormInputLinkService/FormInputLinkService";
-import { ValidationService } from "../../../Services/ValidationService/ValidationService";
+import {
+  ValidationService,
+  IValidator
+} from "../../../Services/ValidationService/ValidationService";
 import { ValidationServiceBuilder } from "../../../Services/ValidationService/ValidationServiceBuilder";
+import { AjaxUtils } from "../../../Utils/AjaxUtils";
 
 const HeadingContainer = styled.div`
   margin-left: auto;
@@ -103,7 +107,7 @@ const LoginButtonContainer = styled.div`
 `;
 
 class Inputs {
-  public TxtUsername = "";
+  public TxtEmail = "";
   public TxtPassword = "";
   public TxtConfirmPassword = "";
 }
@@ -134,7 +138,7 @@ export class RegistrationForm extends React.Component<
 > {
   private InputLinkService: FormInputLinkService;
   private Inputs: Inputs;
-  private ValidationService: ValidationService;
+  private validator: ValidationService;
 
   constructor(props) {
     super(props);
@@ -146,43 +150,88 @@ export class RegistrationForm extends React.Component<
 
     this.InputLinkService = new FormInputLinkService(this.Inputs);
 
-    this.ValidationService = this.BuildValidationService();
+    this.validator = this.BuildValidationService();
   }
 
   private async OnTextboxChange(val, key) {
     this.InputLinkService.SetValueFor(key, val);
+    debugger
+    let isFormValid = await this.validator.RunAllValidators(key);
 
-    if (!(await this.ValidationService.RunAllValidators(key))) {
-      this.setState({
-        isInvalid: false
-      });
-    }
+    this.setState({
+      isInvalid: !isFormValid
+    });
   }
 
   private BuildValidationService() {
     let builder = new ValidationServiceBuilder();
     return builder
-      .NotEmpty(
-        this.BuildGetValueFunction(this.Inputs.TxtUsername),
-        this.Inputs.TxtUsername
-      )
-      .NotEmpty(
-        this.BuildGetValueFunction(this.Inputs.TxtPassword),
-        this.Inputs.TxtPassword
-      )
-      .NotEmpty(
-        this.BuildGetValueFunction(this.Inputs.TxtConfirmPassword),
-        this.Inputs.TxtConfirmPassword
-      )
+      .MergeAll([
+        this.GetEmailValidationBuilder(),
+        // this.BuildNotEmptyFor(this.Inputs.TxtPassword),
+        // this.GetConfirmPasswordValidationBuilder()
+      ])
       .Build();
   }
 
-  private BuildGetValueFunction(input: string) {
-    return () => this.InputLinkService.GetValueFor(input);
+  private GetEmailValidationBuilder() {
+    let validationBuilder = this.BuildNotEmptyFor(this.Inputs.TxtEmail);
+    
+    validationBuilder.AddAsyncValidator({
+      GetValueFunction: () =>
+        this.InputLinkService.GetValueFor(this.Inputs.TxtEmail),
+      ValidateAsync: async value => {
+        let response: boolean = false;
+        try {
+          debugger
+          response = await AjaxUtils.Post({
+            EdnPoint: "api/users/exists/email",
+            Data: value
+          });
+          debugger
+        } catch (error) {
+          response = false;
+        }
+        return response;
+      },
+      ErrorText: "This email address is already in use",
+      Key: this.Inputs.TxtEmail
+    });
+    return validationBuilder;
+  }
+
+  private GetConfirmPasswordValidationBuilder() {
+    let validationBuilder = this.BuildNotEmptyFor(
+      this.Inputs.TxtConfirmPassword
+    );
+
+    let validator: IValidator = {
+      GetValueFunction: () =>
+        this.InputLinkService.GetValueFor(this.Inputs.TxtConfirmPassword),
+      Validate: confirmPasswordValue => {
+        let txtPasswordValue = this.InputLinkService.GetValueFor(
+          this.Inputs.TxtPassword
+        );
+        return txtPasswordValue == confirmPasswordValue;
+      },
+      ErrorText: "Your passwords have to match",
+      Key: this.Inputs.TxtConfirmPassword
+    };
+
+    return validationBuilder.AddValidator(validator);
+  }
+
+  private BuildNotEmptyFor(inputKey: string) {
+    let builder = new ValidationServiceBuilder(inputKey);
+    return builder.NotEmpty(
+      () => this.InputLinkService.GetValueFor(inputKey),
+      inputKey
+    );
   }
 
   private ErrorText(key: string) {
-    return this.ValidationService.Error.AllTop(key);
+    let errorText = this.validator.Error.AllTop(key);
+    return errorText;
   }
 
   render() {
@@ -191,22 +240,24 @@ export class RegistrationForm extends React.Component<
         {this.BuildHeading()}
         <Form disabled={this.state.isRegistering}>
           <StyledTextbox
-            name={this.Inputs.TxtUsername}
-            LabelText="Username"
-            ErrorText={this.ErrorText(this.Inputs.TxtUsername)}
+            name={this.Inputs.TxtEmail}
+            LabelText="Email"
+            ErrorText={this.ErrorText(this.Inputs.TxtEmail)}
             OnChange={(val, key) => this.OnTextboxChange(val, key)}
           />
           <StyledTextbox
             name={this.Inputs.TxtPassword}
             LabelText="Password"
-			ErrorText={this.ErrorText(this.Inputs.TxtPassword)}
-			Type={"password"}
+            ErrorText={this.ErrorText(this.Inputs.TxtPassword)}
+            Type={"password"}
+            OnChange={(val, key) => this.OnTextboxChange(val, key)}
           />
           <StyledTextbox
             name={this.Inputs.TxtConfirmPassword}
             LabelText="Confirm Password"
-			ErrorText={this.ErrorText(this.Inputs.TxtConfirmPassword)}
-			Type={"password"}
+            ErrorText={this.ErrorText(this.Inputs.TxtConfirmPassword)}
+            Type={"password"}
+            OnChange={(val, key) => this.OnTextboxChange(val, key)}
           />
           <RegistrationActionContainer>
             {this.BuildRegisterButton()}
@@ -265,7 +316,7 @@ export class RegistrationForm extends React.Component<
 
   //Event handlers
   private async OnRegisterClick() {
-    await this.ValidationService.RunAllValidators();
+    await this.validator.RunAllValidators();
 
     this.setState({
       isInvalid: true

@@ -13,7 +13,8 @@
 			"*": ["node_modules/*", "src/types/*"],
 
 			"@services/*": ["./src/Services/*"],
-			"@components/*": ["./src/Components"]
+			"@components/*": ["./src/Components/*"],
+			"@utils/*":["./src/Utils/*"]
 		},
 		"types": ["jest", "node"]
 	},

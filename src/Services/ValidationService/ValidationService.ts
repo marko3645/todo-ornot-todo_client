@@ -4,6 +4,7 @@ export interface IValidatorBase {
 	GetValueFunction: () => any;
 	ErrorText?: string;
 	Key?: string;
+	IsInvalid?:boolean;
 }
 
 export interface IValidator extends IValidatorBase {
@@ -15,38 +16,31 @@ export interface IAsyncValidator extends IValidatorBase {
 }
 
 export class ValidationService {
-	private _validators: IValidator[] = [];
-	private _asyncValidatos: IAsyncValidator[] = [];
-
-	public InvalidValidators: IValidator[] = [];
-	public InvalidAsyncValidators: IAsyncValidator[] = [];
-
-	public ValidValidators: IValidator[] = [];
-	public ValidAsyncValidators: IAsyncValidator[] = [];
+	public Validators: IValidator[] = [];
+	public AsyncValidatos: IAsyncValidator[] = [];
 
 	public Error: ErrorTextProvider;
 
 	constructor(validators: IValidator[], asyncValidators: IAsyncValidator[]) {
-		this._validators = validators;
-		this._asyncValidatos = asyncValidators;
+		this.Validators = validators;
+		this.AsyncValidatos = asyncValidators;
 		this.Error = new ErrorTextProvider(this);
 	}
 
 	public RunNormalValidators(key?: string): boolean {
 		let isValid = true;
-		this.InvalidValidators = [];
-		this.ValidValidators = [];
 
-		let validatorsToRun = !key ? this._validators : (this.GetValidatorsToRun(key, this._validators) as IValidator[]);
+		let validatorsToRun = !key ? this.Validators : (this.GetValidatorsToRun(key, this.Validators) as IValidator[]);
 
 		validatorsToRun.forEach((validator: IValidator) => {
 			let value = validator.GetValueFunction();
-			if (!validator.Validate(value)) {
+			let isValidatorValid = validator.Validate(value);
+			validator.IsInvalid = !isValidatorValid;
+
+			if(!isValidatorValid){
 				isValid = false;
-				this.InvalidValidators.push(validator);
-			} else {
-				this.ValidValidators.push(validator);
 			}
+
 		});
 		return isValid;
 	}
@@ -54,21 +48,18 @@ export class ValidationService {
 	public async RunAsyncValidators(key?: string): Promise<boolean> {
 		let isValid = true;
 
-		this.InvalidAsyncValidators = [];
-		this.ValidAsyncValidators = [];
-
-		let validatorsToRun: IAsyncValidator[] = !key ? this._asyncValidatos : (this.GetValidatorsToRun(key, this._asyncValidatos) as IAsyncValidator[]);
+		let validatorsToRun: IAsyncValidator[] = !key ? this.AsyncValidatos : (this.GetValidatorsToRun(key, this.AsyncValidatos) as IAsyncValidator[]);
 
 		for (let i = 0; i < validatorsToRun.length; i++) {
 			let validator = validatorsToRun[i];
 			let value = validator.GetValueFunction();
 			let isValidatorValid = await validator.ValidateAsync(value);
-			if (isValidatorValid) {
-				this.ValidAsyncValidators.push(validator);
-			} else {
+			validator.IsInvalid = !(await validator.ValidateAsync(value));
+
+			if(!isValidatorValid){
 				isValid = false;
-				this.InvalidAsyncValidators.push(validator);
 			}
+
 		}
 		return isValid;
 	}
@@ -98,8 +89,9 @@ export class ErrorTextProvider {
 	}
 
 	public All(key?: string, includeEmptyErrorStrings: boolean = false): string[] {
-		let invalidValidators: IValidatorBase[] = this._validationService.InvalidValidators;
-		invalidValidators.push(...this._validationService.InvalidAsyncValidators);
+				
+		let invalidValidators: IValidatorBase[] = this._validationService.Validators.filter(this.GetValidityFilterFunction());
+		invalidValidators.push(...this._validationService.AsyncValidatos.filter(this.GetValidityFilterFunction()));
 
 		let errorTexts = this.GetErrorTexts(invalidValidators, includeEmptyErrorStrings, key);
 
@@ -107,15 +99,15 @@ export class ErrorTextProvider {
 	}
 
 	public Normal(key?: string, includeEmptyErrorStrings: boolean = false): string[] {
-		return this.GetErrorTexts(this._validationService.InvalidValidators, includeEmptyErrorStrings, key);
+		return this.GetErrorTexts(this._validationService.Validators.filter(this.GetValidityFilterFunction()), includeEmptyErrorStrings, key);
 	}
 
 	public Async(key?: string, includeEmptyErrorStrings: boolean = false): string[] {
-		return this.GetErrorTexts(this._validationService.InvalidAsyncValidators, includeEmptyErrorStrings, key);
+		return this.GetErrorTexts(this._validationService.AsyncValidatos.filter(this.GetValidityFilterFunction()), includeEmptyErrorStrings, key);
 	}
 
 	private GetErrorTexts(validators: IValidatorBase[], includeEmptyErrorStrings: boolean, key?: string) {
-		let filterFunction = this.GetFilterFunction(includeEmptyErrorStrings, key);
+		let filterFunction = this.GetKeyFilterFunction(includeEmptyErrorStrings, key);
 
 		let filteredValidators = validators.filter(filterFunction);
 
@@ -137,9 +129,13 @@ export class ErrorTextProvider {
 		});
 	}
 
-	private GetFilterFunction(includeEmptyErrorStrings: boolean, key?: string) {
+	private GetKeyFilterFunction(includeEmptyErrorStrings: boolean, key?: string) {
 		return (validator: IValidatorBase) => {
 			return (validator.Key == key || !key) && (includeEmptyErrorStrings || validator.ErrorText);
 		};
+	}
+
+	private GetValidityFilterFunction(){
+		return (validator:IValidatorBase) => validator.IsInvalid;
 	}
 }
