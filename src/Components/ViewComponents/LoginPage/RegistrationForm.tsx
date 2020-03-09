@@ -1,7 +1,7 @@
 /** @format */
 import * as React from "react";
 import styled from "styled-components";
-import { TotForm, TotTextbox, TotButton } from "../../TotControls";
+import { TotForm, TotTextbox, TotTextboxState as TextboxState, TotButton } from "../../TotControls";
 import { FormInputLinkService } from "../../../Services/FormInputLinkService/FormInputLinkService";
 import {
   ValidationService,
@@ -9,6 +9,7 @@ import {
 } from "../../../Services/ValidationService/ValidationService";
 import { ValidationServiceBuilder } from "../../../Services/ValidationService/ValidationServiceBuilder";
 import { AjaxUtils } from "../../../Utils/AjaxUtils";
+import { ViewComponentBase } from "../ViewComponentBase";
 
 const HeadingContainer = styled.div`
   margin-left: auto;
@@ -106,12 +107,6 @@ const LoginButtonContainer = styled.div`
   }
 `;
 
-class Inputs {
-  public TxtEmail = "";
-  public TxtPassword = "";
-  public TxtConfirmPassword = "";
-}
-
 const RegistrationActionContainer = styled.div`
   display: flex;
   justify-content: space-between;
@@ -132,106 +127,79 @@ interface RegistrationFormState {
   OnLoginClick: () => void;
 }
 
-export class RegistrationForm extends React.Component<
-  RegistrationFormState,
-  RegistrationFormState
-> {
-  private InputLinkService: FormInputLinkService;
-  private Inputs: Inputs;
-  private validator: ValidationService;
+class Inputs {
+  public TxtEmail = "";
+  public TxtPassword = "";
+  public TxtConfirmPassword = "";
+}
 
+export class RegistrationForm extends ViewComponentBase<
+  RegistrationFormState,
+  RegistrationFormState,
+  Inputs
+> {
   constructor(props) {
     super(props);
     this.OnRegisterClick = this.OnRegisterClick.bind(this);
     this.OnLoginClick = this.OnLoginClick.bind(this);
     this.state = { ...this.props };
 
-    this.Inputs = new Inputs();
+    this._inputs = new Inputs();
 
-    this.InputLinkService = new FormInputLinkService(this.Inputs);
+    this._inputLinkService = new FormInputLinkService(this._inputs);
 
-    this.validator = this.BuildValidationService();
-  }
-
-  private async OnTextboxChange(val, key) {
-    this.InputLinkService.SetValueFor(key, val);
-    debugger
-    let isFormValid = await this.validator.RunAllValidators(key);
-
-    this.setState({
-      isInvalid: !isFormValid
-    });
-  }
-
-  private BuildValidationService() {
-    let builder = new ValidationServiceBuilder();
-    return builder
-      .MergeAll([
-        this.GetEmailValidationBuilder(),
-        // this.BuildNotEmptyFor(this.Inputs.TxtPassword),
-        // this.GetConfirmPasswordValidationBuilder()
-      ])
-      .Build();
+    this.BuildValidationService(
+      this.GetEmailValidationBuilder(),
+      this.BuildNotEmptyFor(this._inputs.TxtPassword)
+      // this.GetConfirmPasswordValidationBuilder()
+    );
   }
 
   private GetEmailValidationBuilder() {
-    let validationBuilder = this.BuildNotEmptyFor(this.Inputs.TxtEmail);
-    
+    let validationBuilder = this.BuildNotEmptyFor(this._inputs.TxtEmail);
+
     validationBuilder.AddAsyncValidator({
       GetValueFunction: () =>
-        this.InputLinkService.GetValueFor(this.Inputs.TxtEmail),
+        this._inputLinkService.GetValueFor(this._inputs.TxtEmail),
       ValidateAsync: async value => {
         let response: boolean = false;
         try {
-          debugger
+          debugger;
           response = await AjaxUtils.Post({
             EdnPoint: "api/users/exists/email",
             Data: value
           });
-          debugger
+          debugger;
         } catch (error) {
           response = false;
         }
         return response;
       },
       ErrorText: "This email address is already in use",
-      Key: this.Inputs.TxtEmail
+      Key: this._inputs.TxtEmail
     });
     return validationBuilder;
   }
 
   private GetConfirmPasswordValidationBuilder() {
     let validationBuilder = this.BuildNotEmptyFor(
-      this.Inputs.TxtConfirmPassword
+      this._inputs.TxtConfirmPassword
     );
 
     let validator: IValidator = {
       GetValueFunction: () =>
-        this.InputLinkService.GetValueFor(this.Inputs.TxtConfirmPassword),
+        this._inputLinkService.GetValueFor(this._inputs.TxtConfirmPassword),
       Validate: confirmPasswordValue => {
-        let txtPasswordValue = this.InputLinkService.GetValueFor(
-          this.Inputs.TxtPassword
+        let txtPasswordValue = this._inputLinkService.GetValueFor(
+          this._inputs.TxtPassword
         );
         return txtPasswordValue == confirmPasswordValue;
       },
       ErrorText: "Your passwords have to match",
-      Key: this.Inputs.TxtConfirmPassword
+      Key: this._inputs.TxtConfirmPassword
     };
 
     return validationBuilder.AddValidator(validator);
-  }
-
-  private BuildNotEmptyFor(inputKey: string) {
-    let builder = new ValidationServiceBuilder(inputKey);
-    return builder.NotEmpty(
-      () => this.InputLinkService.GetValueFor(inputKey),
-      inputKey
-    );
-  }
-
-  private ErrorText(key: string) {
-    let errorText = this.validator.Error.AllTop(key);
-    return errorText;
   }
 
   render() {
@@ -240,24 +208,21 @@ export class RegistrationForm extends React.Component<
         {this.BuildHeading()}
         <Form disabled={this.state.isRegistering}>
           <StyledTextbox
-            name={this.Inputs.TxtEmail}
-            LabelText="Email"
-            ErrorText={this.ErrorText(this.Inputs.TxtEmail)}
-            OnChange={(val, key) => this.OnTextboxChange(val, key)}
+            {...this.GetInputProps<TextboxState>(this._inputs.TxtEmail, {
+              LabelText: "Email"
+            })}
           />
           <StyledTextbox
-            name={this.Inputs.TxtPassword}
-            LabelText="Password"
-            ErrorText={this.ErrorText(this.Inputs.TxtPassword)}
-            Type={"password"}
-            OnChange={(val, key) => this.OnTextboxChange(val, key)}
+            {...this.GetInputProps<TextboxState>(this._inputs.TxtPassword, {
+              LabelText: "Password",
+              Type: "password"
+            })}
           />
           <StyledTextbox
-            name={this.Inputs.TxtConfirmPassword}
-            LabelText="Confirm Password"
-            ErrorText={this.ErrorText(this.Inputs.TxtConfirmPassword)}
-            Type={"password"}
-            OnChange={(val, key) => this.OnTextboxChange(val, key)}
+            {...this.GetInputProps<TextboxState>(
+              this._inputs.TxtConfirmPassword,
+              { LabelText: "Confirm Password", Type: "password" }
+            )}
           />
           <RegistrationActionContainer>
             {this.BuildRegisterButton()}
@@ -316,11 +281,7 @@ export class RegistrationForm extends React.Component<
 
   //Event handlers
   private async OnRegisterClick() {
-    await this.validator.RunAllValidators();
-
-    this.setState({
-      isInvalid: true
-    });
+    await this._validator.RunAllValidators();
   }
 
   private OnLoginClick() {

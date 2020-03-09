@@ -2,14 +2,22 @@
 
 import * as React from "react";
 import styled from "styled-components";
-import { TotButton, TotLink, TotTextbox, TotForm } from "../../TotControls";
+import {
+  TotButton,
+  TotLink,
+  TotTextbox,
+  TotTextboxState as TextboxState,
+  TotForm
+} from "../../TotControls";
 import GoogleLogo from "../../../assets/GoogleLogo.jsx";
 import { AjaxUtils } from "../../../Utils/AjaxUtils";
-
-interface LoginFormState {
-  isLogginIn?: boolean;
-  OnSignUpClick?: () => void;
-}
+import { FormInputLinkService } from "../../../Services/FormInputLinkService";
+import {
+  ValidationService,
+  ValidationServiceBuilder
+} from "../../../Services/ValidationService";
+import { ViewComponentBase } from "../ViewComponentBase";
+import { ConfigUtils, ConfigKeys } from "../../../Utils/ConfigUtils";
 
 const HeadingContainer = styled.div`
   margin-left: auto;
@@ -137,12 +145,32 @@ const GoogleGLogo = styled(GoogleLogo)`
   height: 24px;
 `;
 
-export class LoginForm extends React.Component<LoginFormState, LoginFormState> {
+interface LoginFormState {
+  isLogginIn?: boolean;
+  isFormValid?: boolean;
+  OnSignUpClick?: () => void;
+}
+
+class Inputs {
+  TxtEmail = "";
+  TxtPassword = "";
+}
+
+export class LoginForm extends ViewComponentBase<
+  LoginFormState,
+  LoginFormState,
+  Inputs
+> {
   constructor(props) {
     super(props);
     this.OnLoginClick = this.OnLoginClick.bind(this);
     this.OnSignUpClick = this.OnSignUpClick.bind(this);
     this.state = { ...this.props };
+    this.SetupInputLinkService(new Inputs());
+    this.BuildValidationService(
+      this.BuildNotEmptyFor(this._inputs.TxtEmail),
+      this.BuildNotEmptyFor(this._inputs.TxtPassword)
+    );
   }
 
   render() {
@@ -162,8 +190,17 @@ export class LoginForm extends React.Component<LoginFormState, LoginFormState> {
           </div>
         </HeadingContainer>
         <Form disabled={this.state.isLogginIn}>
-          <TxtEmail LabelText="Email" />
-          <TxtPassword LabelText="Password" Type="password" />
+          <TxtEmail
+            {...this.GetInputProps<TextboxState>(this._inputs.TxtEmail, {
+              LabelText: "Email"
+            })}
+          />
+          <TxtPassword
+            {...this.GetInputProps<TextboxState>(this._inputs.TxtPassword, {
+              LabelText: "Password",
+              Type: "password"
+            })}
+          />
           <ForgotPasswordLink Href="" LabelText="Forgot Password?" />
           <LoginActionContainer>
             {this.BuildLoginButton()}
@@ -192,7 +229,7 @@ export class LoginForm extends React.Component<LoginFormState, LoginFormState> {
   private BuildLoginButton() {
     let preloader = {
       isLoading: this.state.isLogginIn,
-      text: "LoggingIn..."
+      text: "Logging In..."
     };
 
     return (
@@ -207,19 +244,55 @@ export class LoginForm extends React.Component<LoginFormState, LoginFormState> {
   //Event handlers
 
   private async OnLoginClick() {
+    this.StartLoad();
+
+    let context = this;
+
+    let isValid = await this._validator.RunAllValidators();
+    
+    if (!isValid) {
+      this.StopLoad();
+      return;
+    }
+    try {
+
+      let data = {
+        Email: this.GetValueFor(this._inputs.TxtEmail),
+        Password: this.GetValueFor(this._inputs.TxtPassword),
+        ReturnUrl: window.location.href 
+      };
+
+
+      let response = await AjaxUtils.Post({
+        EdnPoint: "auth/login",
+        Data: data
+      });
+      OnLoginRequestSuccess(response);
+    } catch (error) {
+      OnLoginRequestFailure(error);
+    }
+
+    function OnLoginRequestSuccess(response) {
+      console.log(`Login Status: ${response}`);
+      context.StopLoad();
+    }
+
+    function OnLoginRequestFailure(error) {
+      console.log(`Found error in login ${error}`);
+      context.StopLoad();
+    }
+  }
+
+  private StartLoad() {
     this.setState({
       isLogginIn: true
     });
+  }
 
-    AjaxUtils.Post({
-      EdnPoint: "api/users/login",
-      Data: {
-        Email: "Makro",
-        Password: "Coetzee"
-      }
-    })
-      .catch(err => {})
-      .then(value => {});
+  private StopLoad() {
+    this.setState({
+      isLogginIn: false
+    });
   }
 
   private OnSignUpClick() {

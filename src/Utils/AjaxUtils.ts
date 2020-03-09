@@ -17,11 +17,14 @@ export class AjaxUtils {
 		request.DataType = request.DataType || "json";
 		request.ContentType = request.ContentType || "application/json";
 		request.Method = request.Method || "POST";
-
+		
 		let requestData = request.ContentType.toLowerCase() == "application/json" ? JSON.stringify(request.Data) : request.Data;
 
 		return axios.post<AjaxRequestParams, R>(`${request.BaseUrl}/${request.EdnPoint}`, requestData, {
-			method: request.Method
+			method: request.Method,
+			headers: {
+				'Content-Type': 'application/json'
+			}
 		});
 	}
 }

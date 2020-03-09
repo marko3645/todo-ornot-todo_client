@@ -5,7 +5,7 @@ import { IInputControl } from "./Interfaces/TotControlInterfaces";
 import styled from "styled-components";
 import { FormContextProvider, FormContext } from "./TotForm";
 
-interface TotTextboxState extends IInputControl {
+export interface TotTextboxState extends IInputControl {
   Text?: string;
   Type?: "text" | "password";
   OnChange?: (

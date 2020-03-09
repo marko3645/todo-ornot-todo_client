@@ -6,4 +6,4 @@ export { TotForm } from "./TotForm";
 
 export { TotLink } from "./TotLink";
 
-export { TotTextbox } from "./TotTextbox";
+export { TotTextbox, TotTextboxState } from "./TotTextbox";
